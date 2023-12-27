@@ -42,32 +42,37 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 {
   "prompt": "Qué se puede hacer para manejar errores en tiempo de ejecución?"
 }
+```
 
 ```json
 {
   "prompt": "Cómo podemos escribir archivos?"
 }
+```
 
 ```json
 {
   "prompt": "Cómo puedo usar los bloques try y except para el manejo de errores?"
 }
+```
 
 ```json
 {
   "prompt": "Qué son las variables globales y las locales?"
 }
+```
 
 ```json
 {
   "prompt": "Cuál es la diferencia entre una variable global y una local?"
 }
+```
 
 ```json
 {
   "prompt": "Qué son los argumentos variables, *args y **kwargs?"
 }
-
+```
 
 ## Respuesta
 
