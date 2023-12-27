@@ -81,17 +81,23 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 ### Respuesta Exitosa
 
 - Código de Estado: 200 OK
+
+```json
 {
   "status": "ok",
   "answer": "https://www.youtube.com/watch?v=identificador_del_video&t=tiempo_en_segundos"
   "score": float del 0 al 1
 }
+```
 
 - Si hubo un error 
+
+```json
 {
   "status": "error",
   "message": "Error message"
 }
+```
 
 ## Notas
 
