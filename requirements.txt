@@ -1,0 +1,5 @@
+flask
+requests
+qdrant-client
+python-dotenv
+fastembed
