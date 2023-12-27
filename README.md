@@ -34,7 +34,7 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 
 | Nombre   | Tipo    | Descripción                           |
 | -------- | ------- | ------------------------------------- |
-| prompt   | cadena  | El mensaje generado por el usuario para la consulta|
+| prompt   | string  | El mensaje generado por el usuario para la consulta|
 
 #### Ejemplo
 
