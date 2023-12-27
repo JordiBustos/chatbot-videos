@@ -6,8 +6,8 @@
    cd chatbot-videos
 
 2. python -m venv venv
-    source venv/bin/activate en unix o macos
-    .\venv\Scripts\activate en windows
+    - source venv/bin/activate en unix o macos
+    - .\venv\Scripts\activate en windows
 
 3. pip install -r requirements.txt
 
