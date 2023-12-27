@@ -2,8 +2,8 @@
 
 1. **Clonar el Repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/tu-repositorio.git
-   cd tu-repositorio
+   git clone https://github.com/JordiBustos/chatbot-videos.git
+   cd chatbot-videos
 
 2. python -m venv venv
     source venv/bin/activate en unix o macos
