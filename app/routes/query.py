@@ -50,11 +50,11 @@ def process_successful_search(search_result):
     return generate_response(generate_yt_link(search_result[0]), "ok", 200, score)
 
 
-def generate_yt_link(search_result):
+def generate_yt_link(best_response):
     return (
-        search_result.metadata["link"]
+        best_response.metadata["link"]
         + "&t="
-        + str(search_result.metadata["start_time"])
+        + str(best_response.metadata["start_time"])
         + "s"
     )
 
