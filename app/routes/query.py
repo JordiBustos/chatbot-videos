@@ -1,10 +1,10 @@
-from flask import jsonify, request
+from flask import request
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
 from app.utils import generate_response
 
 
-def generate_response():
+def handle_response():
     qdrant_client = connect_qdrant()
     if qdrant_client is None:
         return generate_response(

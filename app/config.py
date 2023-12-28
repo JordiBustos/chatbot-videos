@@ -1,5 +1,4 @@
 import os
-from app.utils import generate_response
 
 
 class Config:
