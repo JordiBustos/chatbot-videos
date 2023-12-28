@@ -90,7 +90,7 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 {
   "status": "ok",
   "answer": "https://www.youtube.com/watch?v=identificador_del_video&t=tiempo_en_segundos"
-  "score": float del 0 al 1
+  "score": "es un float del 0 al 1 representando la confianza en la respuesta"
 }
 ```
 
