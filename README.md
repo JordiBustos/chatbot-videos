@@ -34,13 +34,28 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 
 - **Tipo de contenido:** `application/json`
 
-#### Parámetros
+#### Argumentos
 
 | Nombre | Tipo   | Descripción                                         |
 | ------ | ------ | --------------------------------------------------- |
 | prompt | string | El mensaje generado por el usuario para la consulta |
 
 #### Ejemplo
+
+```javascript
+var requestOptions = {
+  method: "GET",
+  redirect: "follow",
+};
+
+fetch(
+  'http://127.0.0.1:5000/query?prompt="Cómo podemos escribir archivos?"',
+  requestOptions
+)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.log("error", error));
+```
 
 ```json
 {

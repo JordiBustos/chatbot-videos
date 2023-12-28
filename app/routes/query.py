@@ -60,4 +60,4 @@ def generate_yt_link(best_response):
 
 
 def get_prompt(request):
-    return request.get_json().get("prompt")
+    return request.args.get("prompt")
