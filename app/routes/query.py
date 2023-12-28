@@ -5,16 +5,16 @@ from app.utils import generate_response
 
 
 def handle_response():
+    prompt = get_prompt(request)
+
+    if prompt is None or prompt == "":
+        return generate_response("El prompt es obligatorio", "error", 400)
+
     qdrant_client = connect_qdrant()
     if qdrant_client is None:
         return generate_response(
             "No se ha podido conectar al cliente de Qdrant", "error", 500
         )
-
-    prompt = get_prompt(request)
-
-    if prompt is None or prompt == "":
-        return generate_response("El prompt es obligatorio", "error", 400)
 
     try:
         search_result = search_in_qdrant(prompt, Config.COLLECTION_NAME, qdrant_client)
