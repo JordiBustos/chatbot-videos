@@ -1,19 +1,23 @@
 ## Instalación
 
 1. **Clonar el Repositorio:**
+
    ```bash
    git clone https://github.com/JordiBustos/chatbot-videos.git
    cd chatbot-videos
 
+   ```
+
 2. python -m venv venv
-    - source venv/bin/activate en unix o macos
-    - .\venv\Scripts\activate en windows
+
+   - source venv/bin/activate en unix o macos
+   - .\venv\Scripts\activate en windows
 
 3. pip install -r requirements.txt
 
 4. Configurar variables de entorno QDRANT_KEY (apikey) y QDRANT_ENDPOINT (endpoint del cluster)
 
-5. run "flask --app services run"
+5. run "python main.py"
 
 ## Endpoint de Consulta
 
@@ -32,9 +36,9 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 
 #### Parámetros
 
-| Nombre   | Tipo    | Descripción                           |
-| -------- | ------- | ------------------------------------- |
-| prompt   | string  | El mensaje generado por el usuario para la consulta|
+| Nombre | Tipo   | Descripción                                         |
+| ------ | ------ | --------------------------------------------------- |
+| prompt | string | El mensaje generado por el usuario para la consulta |
 
 #### Ejemplo
 
@@ -90,7 +94,7 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 }
 ```
 
-- Si hubo un error 
+- Si hubo un error
 
 ```json
 {
