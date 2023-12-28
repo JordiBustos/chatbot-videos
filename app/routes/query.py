@@ -1,14 +1,18 @@
 from flask import request
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
-from app.utils import generate_response
+from app.utils import generate_response, has_no_letters
 
 
 def handle_response():
     prompt = get_prompt(request)
 
-    if prompt is None or prompt == "":
+    if prompt is None or not prompt.strip():
         return generate_response("El prompt es obligatorio", "error", 400)
+    if has_no_letters(prompt):
+        return generate_response(
+            "El prompt ingresado es inválido. Debe contener letras", "error", 400
+        )
 
     qdrant_client = connect_qdrant()
     if qdrant_client is None:

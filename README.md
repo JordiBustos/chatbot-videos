@@ -120,7 +120,7 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 
 ## Notas
 
-- El parámetro prompt es obligatorio en el cuerpo de la solicitud.
+- El parámetro prompt es obligatorio en el cuerpo de la solicitud y debe contener alguna letra.
 - Una respuesta exitosa incluye un enlace de video generado.
 - Si no se encuentran resultados para el mensaje dado, se devuelve un error 404.
 - Los errores internos del servidor se indican con una respuesta de error 500.
