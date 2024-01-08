@@ -2,7 +2,6 @@ from flask import request
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
 from app.utils import generate_response, get_prompt, validate_prompt, string_not_null
-import requests
 
 
 def handle_faq_response(all=False):
