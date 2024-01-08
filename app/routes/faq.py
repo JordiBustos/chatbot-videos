@@ -18,8 +18,8 @@ def faq():
 def faqs():
     return handle_faq_response(all=True)
 
-
-@bp.route(Config.API_VERSION + "/faq/<string:faq_id>", methods=["PUT", "DELETE"])
+# TODO
+@bp.route(Config.API_VERSION + "/faq/<string:faq_id>", methods=["GET", "PUT", "DELETE"])
 @cross_origin()
 def update_faq(faq_id):
     return update_or_delete_faq(faq_id)
