@@ -19,18 +19,18 @@
 
 5. run "python main.py"
 
-## Endpoint de Consulta query
-
-### Descripción
-
-El endpoint `/query` permite a los usuarios realizar una consulta en una base de datos vectorial, específicamente un clúster de Qdrant. Los usuarios proporcionan un mensaje en la solicitud, y el sistema genera una respuesta basada en los resultados de la consulta.
-
-### Endpoint
+## Endpoint Health
 
 - **Método:** GET
 - **URL:** `health`
 
 Chequear que el servicio está corriendo correctamente
+
+## Endpoint de Consulta query
+
+### Descripción
+
+El endpoint `/query` permite a los usuarios realizar una consulta en una base de datos vectorial, específicamente un clúster de Qdrant. Los usuarios proporcionan un mensaje en la solicitud, y el sistema genera una respuesta basada en los resultados de la consulta.
 
 ### Endpoint
 
