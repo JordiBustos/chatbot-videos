@@ -28,6 +28,13 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 ### Endpoint
 
 - **Método:** GET
+- **URL:** `health`
+
+Chequear que el servicio está corriendo correctamente
+
+### Endpoint
+
+- **Método:** GET
 - **URL:** `api/v1/query`
 
 ### Solicitud
