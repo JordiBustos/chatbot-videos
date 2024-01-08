@@ -2,14 +2,39 @@ from flask import request
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
 from app.utils import generate_response, get_prompt, validate_prompt, string_not_null
+import requests
 
 
-def handle_faq_response():
+def handle_faq_response(all=False):
     if (request.method == "GET"):
-        return handle_get_response()
+        return handle_get_response() if not all else handle_get_all_response()
     if (request.method == "POST"):
         return handle_post_response()
     return generate_response("Método no permitido", "error", 405)
+
+
+def handle_get_all_response():
+    qdrant_client = connect_qdrant()
+    if qdrant_client is None:
+        return generate_response(
+            "No se ha podido conectar al cliente de Qdrant", "error", 500
+        )
+    try:
+        records = qdrant_client.scroll(
+            collection_name=Config.COLLECTION_NAME_FAQ, limit=1000
+        )[0]
+        response = []
+        for doc in records:
+            response.append({
+                "question": doc.payload["document"],
+                "answer": doc.payload["answer"],
+                "category": doc.payload["category"],
+                "courses_id": doc.payload["courses_id"]
+            })
+        return generate_response(response, "ok", 200)
+    except Exception as e:
+        print(e)
+        return generate_response("Algo salió mal en el servidor", "error", 500)
 
 
 def handle_get_response():

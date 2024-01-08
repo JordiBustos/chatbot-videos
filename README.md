@@ -142,10 +142,10 @@ Si es en postman realizar a través de form-data en el body.
 
 ```json
 {
-    "question": "string",
-    "answer": "string",
-    "category": "string <admin, tech>",
-    "courses_id": ["list of string"]
+  "question": "string",
+  "answer": "string",
+  "category": "string <admin, tech>",
+  "courses_id": ["list of string"]
 }
 ```
 
@@ -164,6 +164,31 @@ A pesar de usar palabras diferentes los siguientes dos prompts otorgan el mismo 
   "prompt": "Cómo puedo ingresar a la página"
 }
 ```
+
+### Endpoint
+
+- **Métodos:** GET
+- **URL:** `api/v1/faqs`
+
+Retorna todos los FAQs disponibles
+
+```json
+{
+  "message": [
+    {
+      "answer": "...",
+      "category": "admin",
+      "courses_id": ["all", "1"],
+      "question": "..."
+    },
+  ],
+  "status": "ok"
+}
+```
+
+### Solicitud
+
+- **Tipo de contenido:** `application/json`
 
 ## Notas
 

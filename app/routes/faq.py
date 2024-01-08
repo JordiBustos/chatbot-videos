@@ -11,3 +11,9 @@ bp = Blueprint("faq", __name__)
 @cross_origin()
 def faq():
     return handle_faq_response()
+
+
+@bp.route(Config.API_VERSION + "/faqs", methods=["GET"])
+@cross_origin()
+def faqs():
+    return handle_faq_response(all=True)
