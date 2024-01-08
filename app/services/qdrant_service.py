@@ -24,7 +24,7 @@ def connect_qdrant():
             qdrant_client.create_collection(
                 collection_name=Config.COLLECTION_NAME_FAQ,
                 vectors_config=models.VectorParams(
-                    size=1024, distance=models.Distance.COSINE),
+                    size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE),
             )
 
         return qdrant_client
