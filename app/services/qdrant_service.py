@@ -1,5 +1,7 @@
 from qdrant_client import QdrantClient
+from qdrant_client.http import models
 from app.config import Config
+from app.utils import generate_response
 
 
 class NoResultsError(Exception):
@@ -15,8 +17,19 @@ def connect_qdrant():
 
         qdrant_client.set_model("intfloat/multilingual-e5-large")
 
+        try:
+            qdrant_client.get_collection(
+                collection_name=Config.COLLECTION_NAME)
+        except:
+            qdrant_client.create_collection(
+                collection_name=Config.COLLECTION_NAME_FAQ,
+                vectors_config=models.VectorParams(
+                    size=1024, distance=models.Distance.COSINE),
+            )
+
         return qdrant_client
     except Exception as e:
+        print(e)
         return None
 
 
@@ -29,7 +42,8 @@ def search_in_qdrant(query_text, collection_name, qdrant_client):
 
         results = qdrant_client.query(collection_name, [query_text])
         if not results:
-            raise NoResultsError("No results found in Qdrant for the given query.")
+            raise NoResultsError(
+                "No results found in Qdrant for the given query.")
 
         return results
     except ValueError as ve:
@@ -38,3 +52,15 @@ def search_in_qdrant(query_text, collection_name, qdrant_client):
         return "nre"
     except Exception as e:
         return "e"
+
+
+def get_qdrant_errors():
+    return {
+        "e": generate_response("Algo salió mal en la búsqueda", "error", 400),
+        "ve": generate_response(
+            "Input inválido. Asegúrese que el prompt ingresado existe", "error", 400
+        ),
+        "nre": generate_response(
+            "No se han hallado resultados para la query.", "error", 404
+        ),
+    }
