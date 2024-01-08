@@ -34,7 +34,8 @@ def handle_post_response():
     question = request.form["question"]
     answer = request.form["answer"]
     category = request.form["category"]
-    courses_id = request.form["courses_id"]
+    courses_id = request.form.getlist("courses_id")
+    print(courses_id)
     
     if (not string_not_null(question)):
         return generate_response("La pregunta es obligatoria", "error", 400)
