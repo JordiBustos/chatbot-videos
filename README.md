@@ -28,7 +28,7 @@ El endpoint `/query` permite a los usuarios realizar una consulta en una base de
 ### Endpoint
 
 - **Método:** GET
-- **URL:** `/query`
+- **URL:** `api/v1/query`
 
 ### Solicitud
 
@@ -123,14 +123,15 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 ### Endpoint
 
 - **Métodos:** GET, POST
-- **URL:** `/faq`
+- **URL:** `api/v1/faq`
 
 ### Solicitud
 
 - **Tipo de contenido:** `application/json`
 
-Si la consulta es a través del método GET se debe proporcionar el argumento prompt de manera obligatoria.
+Si la consulta es a través del método GET se debe proporcionar el argumento prompt de manera obligatoria, similar al query.
 En cambio si es a través del método POST se debe proporcionar:
+Si es en postman realizar a través de form-data en el body.
 
 ```json
 {
@@ -138,6 +139,22 @@ En cambio si es a través del método POST se debe proporcionar:
     "answer": "string",
     "category": "string <admin, tech>",
     "courses_id": ["list of string"]
+}
+```
+
+## Ejemplos
+
+A pesar de usar palabras diferentes los siguientes dos prompts otorgan el mismo resultado
+
+```json
+{
+  "prompt": "Cómo entrar en la plataforma"
+}
+```
+
+```json
+{
+  "prompt": "Cómo puedo ingresar a la página"
 }
 ```
 
