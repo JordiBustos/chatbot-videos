@@ -19,7 +19,7 @@
 
 5. run "python main.py"
 
-## Endpoint de Consulta
+## Endpoint de Consulta query
 
 ### Descripción
 
@@ -115,6 +115,29 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 {
   "status": "error",
   "message": "Error message"
+}
+```
+
+## Endpoint de Consulta faq
+
+### Endpoint
+
+- **Métodos:** GET, POST
+- **URL:** `/faq`
+
+### Solicitud
+
+- **Tipo de contenido:** `application/json`
+
+Si la consulta es a través del método GET se debe proporcionar el argumento prompt de manera obligatoria.
+En cambio si es a través del método POST se debe proporcionar:
+
+```json
+{
+    "question": "string",
+    "answer": "string",
+    "category": "string <admin, tech>",
+    "courses_id": ["list of string"]
 }
 ```
 
