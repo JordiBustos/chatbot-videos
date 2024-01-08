@@ -2,20 +2,20 @@ from flask import request
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant, get_qdrant_errors
 from app.config import Config
 from app.utils import generate_response, get_prompt, validate_prompt
-
+from typing import Tuple, Union
+from qdrant_client import QdrantClient
 
 def handle_query_response():
-    prompt = get_prompt(request)
+    prompt: str = get_prompt(request)
 
     prompt_validation = validate_prompt(prompt)
     if (prompt_validation is not True):
         return prompt_validation
 
-    qdrant_client = connect_qdrant()
-    if qdrant_client is None:
-        return generate_response(
-            "No se ha podido conectar al cliente de Qdrant", "error", 500
-        )
+    conn: Union[Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]] = connect_qdrant()
+    if not conn[1]:
+        return conn[0]
+    qdrant_client: QdrantClient = conn[0]
 
     try:
         search_result = search_in_qdrant(
@@ -44,7 +44,7 @@ def process_successful_search(search_result):
     return generate_response(generate_yt_link(search_result[0]), "ok", 200, score)
 
 
-def generate_yt_link(best_response):
+def generate_yt_link(best_response: dict) -> str:
     return (
         best_response.metadata["link"]
         + "&t="

@@ -1,10 +1,12 @@
+from typing import Tuple, Union
 from flask import request
+from qdrant_client import QdrantClient
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
 from app.utils import generate_response, get_prompt, validate_prompt, string_not_null
 
 
-def handle_faq_response(all=False):
+def handle_faq_response(all: bool =False) -> dict:
     if (request.method == "GET"):
         return handle_get_response() if not all else handle_get_all_response()
     if (request.method == "POST"):
@@ -12,17 +14,16 @@ def handle_faq_response(all=False):
     return generate_response("Método no permitido", "error", 405)
 
 
-def handle_get_all_response():
-    qdrant_client = connect_qdrant()
-    if qdrant_client is None:
-        return generate_response(
-            "No se ha podido conectar al cliente de Qdrant", "error", 500
-        )
+def handle_get_all_response() -> dict:
+    conn: Union[Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]] = connect_qdrant()
+    if not conn[1]:
+        return conn[0]
+    qdrant_client: QdrantClient = conn[0]
     try:
-        records = qdrant_client.scroll(
+        records: list = qdrant_client.scroll(
             collection_name=Config.COLLECTION_NAME_FAQ, limit=1000
         )[0]
-        response = []
+        response: list[dict] = []
         for doc in records:
             response.append({
                 "id":doc.id,
@@ -31,25 +32,22 @@ def handle_get_all_response():
                 "category": doc.payload["category"],
                 "courses_id": doc.payload["courses_id"]
             })
-            print(doc)
         return generate_response(response, "ok", 200)
     except Exception as e:
-        print(e)
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
 
 def handle_get_response():
-    prompt = get_prompt(request)
-    prompt_validation = validate_prompt(prompt)
+    prompt: str = get_prompt(request)
+    prompt_validation: Union[bool, Tuple[any, float]] = validate_prompt(prompt)
     if (prompt_validation is not True):
         return prompt_validation
-    qdrant_client = connect_qdrant()
-    if qdrant_client is None:
-        return generate_response(
-            "No se ha podido conectar al cliente de Qdrant", "error", 500
-        )
+    conn: Union[Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]] = connect_qdrant()
+    if not conn[1]:
+        return conn[0]
+    qdrant_client: QdrantClient = conn[0]
     try:
-        search_result = search_in_qdrant(
+        search_result: Union[list, str] = search_in_qdrant(
             prompt, Config.COLLECTION_NAME_FAQ, qdrant_client)
         return handle_faq_result(search_result)
     except Exception as e:
@@ -57,10 +55,10 @@ def handle_get_response():
 
 
 def handle_post_response():
-    question = request.form["question"]
-    answer = request.form["answer"]
-    category = request.form["category"]
-    courses_id = request.form.getlist("courses_id")
+    question: str = request.form["question"]
+    answer: str = request.form["answer"]
+    category: str = request.form["category"]
+    courses_id: list[str] = request.form.getlist("courses_id")
 
     if (not string_not_null(question)):
         return generate_response("La pregunta es obligatoria", "error", 400)
@@ -69,17 +67,16 @@ def handle_post_response():
     if (not string_not_null(category)):
         return generate_response("La categoría es obligatoria", "error", 400)
 
-    qdrant_client = connect_qdrant()
-    if qdrant_client is None:
-        return generate_response(
-            "No se ha podido conectar al cliente de Qdrant", "error", 500
-        )
-    md = {
+    conn: Union[Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]] = connect_qdrant()
+    if not conn[1]:
+        return conn[0]
+    qdrant_client: QdrantClient = conn[0]
+    md: dict = {
         "answer": answer,
         "category": category,
         "courses_id": courses_id
     }
-    text = question.strip()
+    text: str = question.strip()
 
     try:
         qdrant_client.add(Config.COLLECTION_NAME_FAQ,
@@ -102,3 +99,7 @@ def process_successful_search(search_result):
     if score < Config.SCORE_THRESHOLD:
         return generate_response("No se han encontrado resultados", "error", 404)
     return generate_response(search_result[0].metadata["answer"], "ok", 200, score)
+
+
+def update_or_delete_faq(faq_id: str):
+    return generate_response("Método no permitido", "error", 405)

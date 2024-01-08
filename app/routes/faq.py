@@ -1,6 +1,6 @@
 from flask import Blueprint
 from app.config import Config
-from app.controllers.faq import handle_faq_response
+from app.controllers.faq import handle_faq_response, update_or_delete_faq
 from flask_cors import cross_origin
 
 
@@ -22,4 +22,4 @@ def faqs():
 @bp.route(Config.API_VERSION + "/faq/<string:faq_id>", methods=["PUT", "DELETE"])
 @cross_origin()
 def update_faq(faq_id):
-    return
+    return update_or_delete_faq(faq_id)

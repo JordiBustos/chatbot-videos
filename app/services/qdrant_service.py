@@ -1,3 +1,4 @@
+from typing import Union
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from app.config import Config
@@ -8,7 +9,7 @@ class NoResultsError(Exception):
     pass
 
 
-def connect_qdrant():
+def connect_qdrant() -> Union[QdrantClient, None]:
     try:
         qdrant_client = QdrantClient(
             url=Config.QDRANT_ENDPOINT,
@@ -27,13 +28,14 @@ def connect_qdrant():
                     size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE),
             )
 
-        return qdrant_client
+        return qdrant_client, True
     except Exception as e:
-        print(e)
-        return None
+        return generate_response(
+            "No se ha podido conectar al cliente de Qdrant", "error", 500
+        ), False
 
 
-def search_in_qdrant(query_text, collection_name, qdrant_client):
+def search_in_qdrant(query_text, collection_name, qdrant_client) -> Union[list, str]:
     try:
         if not query_text or not collection_name or not qdrant_client:
             raise ValueError(
@@ -54,7 +56,7 @@ def search_in_qdrant(query_text, collection_name, qdrant_client):
         return "e"
 
 
-def get_qdrant_errors():
+def get_qdrant_errors() -> dict:
     return {
         "e": generate_response("Algo salió mal en la búsqueda", "error", 400),
         "ve": generate_response(
