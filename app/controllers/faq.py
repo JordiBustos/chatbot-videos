@@ -25,11 +25,13 @@ def handle_get_all_response():
         response = []
         for doc in records:
             response.append({
+                "id":doc.id,
                 "question": doc.payload["document"],
                 "answer": doc.payload["answer"],
                 "category": doc.payload["category"],
                 "courses_id": doc.payload["courses_id"]
             })
+            print(doc)
         return generate_response(response, "ok", 200)
     except Exception as e:
         print(e)

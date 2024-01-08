@@ -150,6 +150,7 @@ Si es en postman realizar a través de form-data en el body.
 
 ```json
 {
+  "id": "string",
   "question": "string",
   "answer": "string",
   "category": "string <admin, tech>",
