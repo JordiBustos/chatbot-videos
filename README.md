@@ -1,10 +1,9 @@
-TODO 
+TODO
 
 - Mover la validación a middlewares
 - Update & Delete faqs
 - endpoint para sanitizar inputs con openai
 - endpoint para generar respuesta final con openai
-
 
 ## Instalación
 
@@ -30,7 +29,7 @@ TODO
 ## Endpoint Health
 
 - **Método:** GET
-- **URL:** `health`
+- **URL:** `/health`
 
 Chequear que el servicio está corriendo correctamente
 
@@ -38,7 +37,7 @@ Chequear que el servicio está corriendo correctamente
 
 ### Descripción
 
-El endpoint `/query` permite a los usuarios realizar una consulta en una base de datos vectorial, específicamente un clúster de Qdrant. Los usuarios proporcionan un mensaje en la solicitud, y el sistema genera una respuesta basada en los resultados de la consulta.
+El endpoint `/api/v1/query` permite a los usuarios realizar una consulta en una base de datos vectorial, específicamente un clúster de Qdrant. Los usuarios proporcionan un mensaje en la solicitud, y el sistema genera una respuesta basada en los resultados de la consulta.
 
 ### Endpoint
 
@@ -190,7 +189,32 @@ Retorna todos los FAQs disponibles
       "courses_id": ["all", "1"],
       "question": "..."
     },
+    {
+      "answer": "...",
+      "category": "tech",
+      "courses_id": ["all", "1"],
+      "question": "..."
+    }
   ],
+  "status": "ok"
+}
+```
+
+### Endpoint
+
+- **Métodos:** GET, PUT, DELETE
+- **URL:** `api/v1/faq/<faq_id>`
+
+Retorna un FAQ específico, se debe pasar el id del FAQ en la url. En caso de querer modificar un faq se debe enviar en el body del los campos a modificar.
+
+```json
+{
+  "message": {
+    "answer": "...",
+    "category": "admin",
+    "courses_id": ["all", "1"],
+    "question": "..."
+  },
   "status": "ok"
 }
 ```
