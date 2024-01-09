@@ -1,6 +1,5 @@
 from app.utils import generate_response, string_not_null
 
-
 def extract_and_validate_post_data(request):
     question = request.form.get("question")
     answer = request.form.get("answer")

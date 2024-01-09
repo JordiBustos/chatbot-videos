@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Tuple
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from app.config import Config
@@ -9,7 +9,7 @@ class NoResultsError(Exception):
     pass
 
 
-def connect_qdrant() -> Union[QdrantClient, None]:
+def connect_qdrant() -> Union[Tuple[QdrantClient, bool], None]:
     try:
         qdrant_client = QdrantClient(
             url=Config.QDRANT_ENDPOINT,
@@ -20,13 +20,10 @@ def connect_qdrant() -> Union[QdrantClient, None]:
 
         try:
             qdrant_client.get_collection(collection_name=Config.COLLECTION_NAME)
+            qdrant_client.get_collection(collection_name=Config.COLLECTION_NAME_FAQ)
         except:
-            qdrant_client.create_collection(
-                collection_name=Config.COLLECTION_NAME_FAQ,
-                vectors_config=models.VectorParams(
-                    size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE
-                ),
-            )
+            create_collection(qdrant_client, Config.COLLECTION_NAME_FAQ)
+            create_collection(qdrant_client, Config.COLLECTION_NAME)
 
         return qdrant_client, False
     except Exception as e:
@@ -68,3 +65,12 @@ def get_qdrant_errors() -> dict:
             "No se han hallado resultados para la query.", "error", 404
         ),
     }
+
+
+def create_collection(qdrant_client, collection_name):
+    qdrant_client.create_collection(
+        collection_name=collection_name,
+        vectors_config=models.VectorParams(
+            size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE
+        ),
+    )
