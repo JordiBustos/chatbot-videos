@@ -39,6 +39,8 @@ def handle_get_all_response(qdrant_client: QdrantClient) -> dict:
             generate_faq_dict(doc.payload, doc.id) for doc in records
         ]
         return generate_response(response, "ok", 200)
+    except UnexpectedResponse as ur:
+        return generate_response(f"{ur}", "error", 404)
     except Exception as e:
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
@@ -53,6 +55,8 @@ def handle_get_response(qdrant_client: QdrantClient):
             prompt, Config.COLLECTION_NAME_FAQ, qdrant_client
         )
         return handle_faq_result(search_result)
+    except UnexpectedResponse as ur:
+        return generate_response(f"{ur}", "error", 404)
     except Exception as e:
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
@@ -76,6 +80,8 @@ def handle_post_response(qdrant_client: QdrantClient):
     try:
         qdrant_client.add(Config.COLLECTION_NAME_FAQ, documents=[text], metadata=[md])
         return generate_response("Pregunta agregada correctamente", "ok", 200)
+    except UnexpectedResponse as e:
+        return generate_response(f"{e}", "error", 400)
     except Exception as e:
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
@@ -129,12 +135,11 @@ def get_faq_by_id(faq_id: str):
 
     faq, err = retrieve_faq(qdrant_client, faq_id)
     if err:
-        return
+        return faq
     if len(faq) == 0:
         return generate_response("La pregunta no existe", "error", 404)
-    faq = faq[0]
     return generate_response(
-        generate_faq_dict(faq.payload, faq.id),
+        generate_faq_dict(faq[0].payload, faq[0].id),
         "ok",
         200,
     )
