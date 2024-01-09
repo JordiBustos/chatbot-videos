@@ -65,4 +65,4 @@ def retrieve_faq(qdrant_client: QdrantClient, faq_id: str) -> Union[Response, tu
     except UnexpectedResponse as ue:
         return generate_response(f"{ue}", "error", 404), True
     except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500), True
+        return generate_response(f"{e}", "error", 500), True

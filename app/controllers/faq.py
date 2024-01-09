@@ -1,4 +1,3 @@
-from typing import Tuple, Union
 from flask import request
 from app.middlewares.faq import extract_and_validate_post_data
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
