@@ -132,7 +132,7 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 }
 ```
 
-## Endpoint de Consulta faq
+## Consultas de FAQs
 
 ### Endpoint
 
@@ -143,9 +143,7 @@ La API devuelve una respuesta JSON basada en los resultados de la consulta.
 
 - **Tipo de contenido:** `application/json`
 
-Si la consulta es a través del método GET se debe proporcionar el argumento prompt de manera obligatoria, similar al query.
-En cambio si es a través del método POST se debe proporcionar:
-Si es en postman realizar a través de form-data en el body.
+Si la consulta es a través del método GET, se debe proporcionar el argumento prompt de manera obligatoria, similar al query. En cambio, si es a través del método POST, se debe proporcionar:
 
 ```json
 {
