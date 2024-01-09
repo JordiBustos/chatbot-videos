@@ -60,7 +60,7 @@ def get_qdrant_errors() -> QdrantError:
     return {
         "e": generate_response("Algo salió mal en la búsqueda", "error", 500),
         "ve": generate_response(
-            "Input inválido. Asegúrese que el prompt ingresado existe", "error", 400
+            "Input inválido. Asegúrese de haber ingresado el prompt", "error", 400
         ),
         "nre": generate_response(
             "No se han hallado resultados para la query.", "error", 404
