@@ -6,7 +6,15 @@ from flask_cors import CORS, cross_origin
 from app.routes import query, faq
 
 app = Flask(__name__)
-CORS(app, resources={r"/query": {"origins": "*"}})
+CORS(
+    app,
+    resources={
+        r"/query": {"origins": "*"},
+        r"/faq": {"origins": "*"},
+        r"/faqs": {"origins": "*"},
+        r"/faq/<string:faq_id>": {"origins": "*"},
+    },
+)
 app.config.from_object("app.config.Config")
 app.register_blueprint(query.bp)
 app.register_blueprint(faq.bp)
