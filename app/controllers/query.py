@@ -5,9 +5,8 @@ from app.services.qdrant_service import (
     get_qdrant_errors,
 )
 from app.config import Config
+from app.types import QdrantError
 from app.utils import generate_response, get_prompt, validate_prompt
-from typing import Tuple, Union
-from qdrant_client import QdrantClient
 
 
 def handle_query_response():
@@ -17,22 +16,19 @@ def handle_query_response():
     if prompt_validation is not True:
         return prompt_validation
 
-    conn: Union[
-        Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]
-    ] = connect_qdrant()
-    if not conn[1]:
-        return conn[0]
-    qdrant_client: QdrantClient = conn[0]
+    qdrant_client, err = connect_qdrant()
+    if err:
+        return qdrant_client
 
     try:
         search_result = search_in_qdrant(prompt, Config.COLLECTION_NAME, qdrant_client)
         return handle_search_result(search_result)
     except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500)
+        return generate_response(f"{e}", "error", 500)
 
 
 def handle_search_result(search_result):
-    qdrant_search_errors = get_qdrant_errors()
+    qdrant_search_errors: QdrantError = get_qdrant_errors()
 
     return (
         process_successful_search(search_result)
@@ -43,10 +39,8 @@ def handle_search_result(search_result):
 
 def process_successful_search(search_result):
     score = search_result[0].score
-
     if score < Config.SCORE_THRESHOLD:
         return generate_response("No se han encontrado resultados", "error", 404)
-
     return generate_response(generate_yt_link(search_result[0]), "ok", 200, score)
 
 

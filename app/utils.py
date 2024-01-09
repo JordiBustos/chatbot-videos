@@ -1,11 +1,10 @@
 from flask import jsonify
 import re
-from typing import Optional, Union, Tuple
+from typing import Optional, Union
 from app.config import Config
 from qdrant_client.http.exceptions import UnexpectedResponse
 from qdrant_client import QdrantClient
-
-Response = Tuple[dict, int]
+from app.types import Response, FaqDict
 
 
 def generate_response(
@@ -49,7 +48,7 @@ def process_successful_search(search_result: list) -> Response:
     return generate_response(search_result[0].metadata["answer"], "ok", 200, score)
 
 
-def generate_faq_dict(doc: dict, doc_id: int) -> dict:
+def generate_faq_dict(doc: dict, doc_id: int) -> FaqDict:
     return {
         "id": doc_id,
         "question": doc["document"],

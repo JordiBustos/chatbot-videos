@@ -46,12 +46,12 @@ def handle_get_all_response(qdrant_client: QdrantClient) -> dict:
 
 
 def handle_get_response(qdrant_client: QdrantClient):
-    prompt: str = get_prompt(request)
-    prompt_validation: Union[bool, Tuple[any, float]] = validate_prompt(prompt)
+    prompt = get_prompt(request)
+    prompt_validation = validate_prompt(prompt)
     if prompt_validation is not True:
         return prompt_validation
     try:
-        search_result: Union[list, str] = search_in_qdrant(
+        search_result = search_in_qdrant(
             prompt, Config.COLLECTION_NAME_FAQ, qdrant_client
         )
         return handle_faq_result(search_result)

@@ -3,15 +3,16 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from app.config import Config
 from app.utils import generate_response
+from app.types import QdrantError, QdrantConnection
 
 
 class NoResultsError(Exception):
     pass
 
 
-def connect_qdrant() -> Union[Tuple[QdrantClient, bool], None]:
+def connect_qdrant() -> QdrantConnection:
     try:
-        qdrant_client = QdrantClient(
+        qdrant_client: QdrantClient = QdrantClient(
             url=Config.QDRANT_ENDPOINT,
             api_key=Config.QDRANT_KEY,
         )
@@ -55,7 +56,7 @@ def search_in_qdrant(query_text, collection_name, qdrant_client) -> Union[list, 
         return "e"
 
 
-def get_qdrant_errors() -> dict:
+def get_qdrant_errors() -> QdrantError:
     return {
         "e": generate_response("Algo salió mal en la búsqueda", "error", 400),
         "ve": generate_response(

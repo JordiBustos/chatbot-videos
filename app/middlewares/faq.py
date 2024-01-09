@@ -1,4 +1,6 @@
 from app.utils import generate_response, string_not_null
+from app.types import FaqCategory
+
 
 def extract_and_validate_post_data(request):
     question = request.form.get("question")
@@ -6,6 +8,12 @@ def extract_and_validate_post_data(request):
     category = request.form.get("category")
     courses_id = request.form.getlist("courses_id")
 
+    try:
+        FaqCategory(category).name
+    except:
+        return False, generate_response(
+            "La categoría ingresada es inválida", "error", 400
+        )
     if not string_not_null(question):
         return False, generate_response("La pregunta es obligatoria", "error", 400)
     if not string_not_null(answer):
