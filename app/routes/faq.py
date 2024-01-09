@@ -3,6 +3,7 @@ from app.config import Config
 from app.controllers.faq import handle_faq_response, update_or_delete_faq, get_faq_by_id
 from flask_cors import cross_origin
 from flask import request
+from markupsafe import escape
 
 bp = Blueprint("faq", __name__)
 
@@ -23,6 +24,7 @@ def faqs():
 @bp.route(f"{Config.API_VERSION}/faq/<string:faq_id>", methods=["GET", "PUT", "DELETE"])
 @cross_origin()
 def update_faq(faq_id: str):
+    faq_id = escape(faq_id)
     if request.method == "GET":
         return get_faq_by_id(faq_id)
     return update_or_delete_faq(faq_id)

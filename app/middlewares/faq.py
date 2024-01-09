@@ -1,12 +1,13 @@
 from app.utils import generate_response, string_not_null
 from app.types import FaqCategory
+from markupsafe import escape
 
 
 def extract_and_validate_post_data(request):
-    question = request.form.get("question")
-    answer = request.form.get("answer")
-    category = request.form.get("category")
-    courses_id = request.form.getlist("courses_id")
+    question = escape(request.form.get("question"))
+    answer = escape(request.form.get("answer"))
+    category = escape(request.form.get("category"))
+    courses_id = escape(request.form.getlist("courses_id"))
 
     try:
         FaqCategory(category).name
