@@ -7,19 +7,20 @@ from flask_cors import cross_origin
 bp = Blueprint("faq", __name__)
 
 
-@bp.route(Config.API_VERSION + "/faq", methods=["GET", "POST"])
+@bp.route(f"{Config.API_VERSION}/faq", methods=["GET", "POST"])
 @cross_origin()
 def faq():
     return handle_faq_response()
 
 
-@bp.route(Config.API_VERSION + "/faqs", methods=["GET"])
+@bp.route(f"{Config.API_VERSION}/faqs", methods=["GET"])
 @cross_origin()
 def faqs():
     return handle_faq_response(all=True)
 
+
 # TODO
-@bp.route(Config.API_VERSION + "/faq/<string:faq_id>", methods=["GET", "PUT", "DELETE"])
+@bp.route(f"{Config.API_VERSION}/faq/<string:faq_id>", methods=["GET", "PUT", "DELETE"])
 @cross_origin()
 def update_faq(faq_id):
     return update_or_delete_faq(faq_id)

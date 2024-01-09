@@ -19,20 +19,23 @@ def connect_qdrant() -> Union[QdrantClient, None]:
         qdrant_client.set_model("intfloat/multilingual-e5-large")
 
         try:
-            qdrant_client.get_collection(
-                collection_name=Config.COLLECTION_NAME)
+            qdrant_client.get_collection(collection_name=Config.COLLECTION_NAME)
         except:
             qdrant_client.create_collection(
                 collection_name=Config.COLLECTION_NAME_FAQ,
                 vectors_config=models.VectorParams(
-                    size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE),
+                    size=Config.EMBEDDING_MODEL_SIZE, distance=models.Distance.COSINE
+                ),
             )
 
         return qdrant_client, True
     except Exception as e:
-        return generate_response(
-            "No se ha podido conectar al cliente de Qdrant", "error", 500
-        ), False
+        return (
+            generate_response(
+                "No se ha podido conectar al cliente de Qdrant", "error", 500
+            ),
+            False,
+        )
 
 
 def search_in_qdrant(query_text, collection_name, qdrant_client) -> Union[list, str]:
@@ -44,8 +47,7 @@ def search_in_qdrant(query_text, collection_name, qdrant_client) -> Union[list, 
 
         results = qdrant_client.query(collection_name, [query_text])
         if not results:
-            raise NoResultsError(
-                "No results found in Qdrant for the given query.")
+            raise NoResultsError("No results found in Qdrant for the given query.")
 
         return results
     except ValueError as ve:

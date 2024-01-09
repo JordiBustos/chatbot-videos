@@ -15,6 +15,7 @@ CORS(
         r"/faq/<string:faq_id>": {"origins": "*"},
     },
 )
+
 app.config.from_object("app.config.Config")
 app.register_blueprint(query.bp)
 app.register_blueprint(faq.bp)

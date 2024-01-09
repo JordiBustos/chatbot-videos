@@ -3,8 +3,12 @@ import re
 from typing import Optional, Union, Tuple
 
 
-
-def generate_response(message: Union[str, list, dict], status: str, code: int, score: Optional[float]=None) -> Tuple[dict, float]:
+def generate_response(
+    message: Union[str, list, dict],
+    status: str,
+    code: int,
+    score: Optional[float] = None,
+) -> Tuple[dict, float]:
     response = {} if score is None else {"score": score}
     response["message"] = message
     response["status"] = status
