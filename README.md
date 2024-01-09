@@ -205,7 +205,9 @@ Retorna todos los FAQs disponibles
 - **Métodos:** GET, PUT, DELETE
 - **URL:** `api/v1/faq/<faq_id>`
 
-Retorna un FAQ específico, se debe pasar el id del FAQ en la url. En caso de querer modificar un faq se debe enviar en el body del los campos a modificar.
+GET: Retorna un FAQ específico, se debe pasar el id del FAQ en la url.
+PUT: En caso de querer modificar un faq se debe enviar en el body del los campos a modificar, si un campo no debe ser modificado, se debe enviar el valor actual, de otra forma el overwrite del payload lo ignorará.
+DELETE: Se elimina el id pasado en la url.
 
 ```json
 {

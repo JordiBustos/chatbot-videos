@@ -63,8 +63,7 @@ def handle_get_response(qdrant_client: QdrantClient):
 
 def handle_post_response(qdrant_client: QdrantClient):
     result = extract_and_validate_post_data(request)
-
-    if not result[0]:
+    if result[0]:
         text, md = result[1], result[2]
         try:
             qdrant_client.add(
@@ -102,7 +101,7 @@ def update_or_delete_faq(faq_id: str):
 
 def handle_update_response(faq_id: str, qdrant_client: QdrantClient):
     result = extract_and_validate_post_data(request)
-    if not result[0]:
+    if result[0]:
         try:
             qdrant_client.overwrite_payload(
                 Config.COLLECTION_NAME_FAQ,
@@ -114,9 +113,13 @@ def handle_update_response(faq_id: str, qdrant_client: QdrantClient):
                 },
                 points=[faq_id],
             )
-        except:
-            pass
-    return result[1]
+            return generate_response("Pregunta actualizada correctamente", "ok", 200)
+        except UnexpectedResponse as e:
+            return generate_response(f"{e}", "error", 400)
+        except Exception as e:
+            return generate_response("Algo salió mal en el servidor", "error", 500)
+    else:
+        return result[1]
 
 
 def handle_faq_delete_response(faq_id: str, qdrant_client: QdrantClient):
