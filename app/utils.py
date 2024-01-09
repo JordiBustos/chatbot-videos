@@ -48,7 +48,7 @@ def process_successful_search(search_result):
 def generate_faq_dict(doc: dict, doc_id: int) -> dict:
     return {
         "id": doc_id,
-        "question": doc["question"],
+        "question": doc["document"],
         "answer": doc["answer"],
         "category": doc["category"],
         "courses_id": doc["courses_id"],

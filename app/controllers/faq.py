@@ -18,7 +18,6 @@ def handle_faq_response(all: bool = False) -> dict:
     qdrant_client, err = connect_qdrant()
     if err:
         return qdrant_client
-
     if request.method == "GET":
         return (
             handle_get_response(qdrant_client)
