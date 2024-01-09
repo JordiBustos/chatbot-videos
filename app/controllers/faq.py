@@ -31,7 +31,7 @@ def handle_faq_response(all: bool = False) -> dict:
 
 def handle_get_all_response(qdrant_client: QdrantClient) -> dict:
     try:
-        records: list = qdrant_client.scroll(
+        records = qdrant_client.scroll(
             collection_name=Config.COLLECTION_NAME_FAQ, limit=1000
         )[0]
         response: list[dict] = [

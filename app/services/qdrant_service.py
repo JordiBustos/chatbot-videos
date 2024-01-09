@@ -29,9 +29,7 @@ def connect_qdrant() -> QdrantConnection:
         return qdrant_client, False
     except Exception as e:
         return (
-            generate_response(
-                "No se ha podido conectar al cliente de Qdrant", "error", 500
-            ),
+            generate_response(f"{e}", "error", 500),
             True,
         )
 
