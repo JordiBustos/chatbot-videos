@@ -2,6 +2,8 @@ from flask import jsonify
 import re
 from typing import Optional, Union, Tuple
 from app.config import Config
+from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client import QdrantClient
 
 
 def generate_response(
@@ -53,3 +55,13 @@ def generate_faq_dict(doc: dict, doc_id: int) -> dict:
         "category": doc["category"],
         "courses_id": doc["courses_id"],
     }
+
+
+def retrieve_faq(qdrant_client: QdrantClient, faq_id: str):
+    try:
+        faq = qdrant_client.retrieve(Config.COLLECTION_NAME_FAQ, [faq_id])
+        return faq, False
+    except UnexpectedResponse as e:
+        return generate_response(f"{e}", "error", 404), True
+    except Exception as e:
+        return generate_response("Algo salió mal en el servidor", "error", 500), True

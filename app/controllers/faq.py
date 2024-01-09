@@ -7,7 +7,7 @@ from app.utils import (
     generate_response,
     get_prompt,
     validate_prompt,
-    string_not_null,
+    retrieve_faq,
     process_successful_search,
     generate_faq_dict,
 )
@@ -136,13 +136,3 @@ def get_faq_by_id(faq_id: str):
         "ok",
         200,
     )
-
-
-def retrieve_faq(qdrant_client: QdrantClient, faq_id: str):
-    try:
-        faq = qdrant_client.retrieve(Config.COLLECTION_NAME_FAQ, [faq_id])
-        return faq, False
-    except UnexpectedResponse as e:
-        return generate_response(f"{e}", "error", 404), True
-    except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500), True
