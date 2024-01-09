@@ -28,13 +28,13 @@ def connect_qdrant() -> Union[QdrantClient, None]:
                 ),
             )
 
-        return qdrant_client, True
+        return qdrant_client, False
     except Exception as e:
         return (
             generate_response(
                 "No se ha podido conectar al cliente de Qdrant", "error", 500
             ),
-            False,
+            True,
         )
 
 

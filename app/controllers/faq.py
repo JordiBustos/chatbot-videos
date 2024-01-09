@@ -3,56 +3,51 @@ from flask import request
 from qdrant_client import QdrantClient
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
-from app.utils import generate_response, get_prompt, validate_prompt, string_not_null
+from app.utils import (
+    generate_response,
+    get_prompt,
+    validate_prompt,
+    string_not_null,
+    process_successful_search,
+    generate_faq_dict,
+)
+from qdrant_client.http.exceptions import UnexpectedResponse
 
 
 def handle_faq_response(all: bool = False) -> dict:
+    qdrant_client, err = connect_qdrant()
+    if err:
+        return qdrant_client
+
     if request.method == "GET":
-        return handle_get_response() if not all else handle_get_all_response()
+        return (
+            handle_get_response(qdrant_client)
+            if not all
+            else handle_get_all_response(qdrant_client)
+        )
     if request.method == "POST":
-        return handle_post_response()
+        return handle_post_response(qdrant_client)
     return generate_response("Método no permitido", "error", 405)
 
 
-def handle_get_all_response() -> dict:
-    conn: Union[
-        Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]
-    ] = connect_qdrant()
-    if not conn[1]:
-        return conn[0]
-    qdrant_client: QdrantClient = conn[0]
+def handle_get_all_response(qdrant_client: QdrantClient) -> dict:
     try:
         records: list = qdrant_client.scroll(
             collection_name=Config.COLLECTION_NAME_FAQ, limit=1000
         )[0]
         response: list[dict] = [
-            {
-                "id": doc.id,
-                "question": doc.payload["document"],
-                "answer": doc.payload["answer"],
-                "category": doc.payload["category"],
-                "courses_id": doc.payload["courses_id"],
-            }
-            for doc in records
+            generate_faq_dict(doc.payload, doc.id) for doc in records
         ]
         return generate_response(response, "ok", 200)
     except Exception as e:
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
 
-def handle_get_response():
+def handle_get_response(qdrant_client: QdrantClient):
     prompt: str = get_prompt(request)
     prompt_validation: Union[bool, Tuple[any, float]] = validate_prompt(prompt)
     if prompt_validation is not True:
         return prompt_validation
-
-    conn: Union[
-        Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]
-    ] = connect_qdrant()
-    if not conn[1]:
-        return conn[0]
-    qdrant_client: QdrantClient = conn[0]
-
     try:
         search_result: Union[list, str] = search_in_qdrant(
             prompt, Config.COLLECTION_NAME_FAQ, qdrant_client
@@ -62,7 +57,7 @@ def handle_get_response():
         return generate_response("Algo salió mal en el servidor", "error", 500)
 
 
-def handle_post_response():
+def handle_post_response(qdrant_client: QdrantClient):
     question: str = request.form["question"]
     answer: str = request.form["answer"]
     category: str = request.form["category"]
@@ -74,13 +69,6 @@ def handle_post_response():
         return generate_response("La respuesta es obligatoria", "error", 400)
     if not string_not_null(category):
         return generate_response("La categoría es obligatoria", "error", 400)
-
-    conn: Union[
-        Tuple[QdrantClient, bool], Tuple[Tuple[dict, int], bool]
-    ] = connect_qdrant()
-    if not conn[1]:
-        return conn[0]
-    qdrant_client: QdrantClient = conn[0]
 
     md: dict = {"answer": answer, "category": category, "courses_id": courses_id}
     text: str = question.strip()
@@ -100,12 +88,63 @@ def handle_faq_result(search_result):
     )
 
 
-def process_successful_search(search_result):
-    score = search_result[0].score
-    if score < Config.SCORE_THRESHOLD:
-        return generate_response("No se han encontrado resultados", "error", 404)
-    return generate_response(search_result[0].metadata["answer"], "ok", 200, score)
-
-
 def update_or_delete_faq(faq_id: str):
+    conn, err = connect_qdrant()
+    if err:
+        return conn
+    qdrant_client: QdrantClient = conn
+    if request.method == "PUT":
+        return handle_faq_put_response(faq_id, qdrant_client)
+    if request.method == "DELETE":
+        return handle_faq_delete_response(faq_id, qdrant_client)
+
     return generate_response("Método no permitido", "error", 405)
+
+
+def handle_faq_put_response(faq_id: str, qdrant_client: QdrantClient):
+    return
+
+
+def handle_faq_delete_response(faq_id: str, qdrant_client: QdrantClient):
+    faq, err = retrieve_faq(qdrant_client, faq_id)
+    if err:
+        return faq
+
+    if len(faq) == 0:
+        return generate_response("La pregunta no existe", "error", 404)
+
+    try:
+        qdrant_client.delete(Config.COLLECTION_NAME_FAQ, [faq_id])
+        return generate_response("Pregunta eliminada correctamente", "ok", 200)
+    except UnexpectedResponse as e:
+        return generate_response(f"{e}", "error", 400)
+    except Exception as e:
+        return generate_response("Algo salió mal en el servidor", "error", 500)
+
+
+def get_faq_by_id(faq_id: str):
+    qdrant_client, err = connect_qdrant()
+    if err:
+        return qdrant_client
+
+    faq, err = retrieve_faq(qdrant_client, faq_id)
+    if err:
+        return
+    if len(faq) == 0:
+        return generate_response("La pregunta no existe", "error", 404)
+    faq = faq[0]
+    return generate_response(
+        generate_faq_dict(faq.payload, faq.id),
+        "ok",
+        200,
+    )
+
+
+def retrieve_faq(qdrant_client: QdrantClient, faq_id: str):
+    try:
+        faq = qdrant_client.retrieve(Config.COLLECTION_NAME_FAQ, [faq_id])
+        return faq, False
+    except UnexpectedResponse as e:
+        return generate_response(f"{e}", "error", 404), True
+    except Exception as e:
+        return generate_response("Algo salió mal en el servidor", "error", 500), True
