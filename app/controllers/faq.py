@@ -1,6 +1,6 @@
 from typing import Tuple, Union
 from flask import request
-from qdrant_client import QdrantClient
+from app.middlewares.faq import extract_and_validate_post_data
 from app.services.qdrant_service import connect_qdrant, search_in_qdrant
 from app.config import Config
 from app.utils import (
@@ -12,6 +12,7 @@ from app.utils import (
     generate_faq_dict,
 )
 from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client import QdrantClient
 
 
 def handle_faq_response(all: bool = False) -> dict:
@@ -61,28 +62,21 @@ def handle_get_response(qdrant_client: QdrantClient):
 
 
 def handle_post_response(qdrant_client: QdrantClient):
-    question: str = request.form["question"]
-    answer: str = request.form["answer"]
-    category: str = request.form["category"]
-    courses_id: list[str] = request.form.getlist("courses_id")
+    result = extract_and_validate_post_data(request)
 
-    if not string_not_null(question):
-        return generate_response("La pregunta es obligatoria", "error", 400)
-    if not string_not_null(answer):
-        return generate_response("La respuesta es obligatoria", "error", 400)
-    if not string_not_null(category):
-        return generate_response("La categoría es obligatoria", "error", 400)
-
-    md: dict = {"answer": answer, "category": category, "courses_id": courses_id}
-    text: str = question.strip()
-
-    try:
-        qdrant_client.add(Config.COLLECTION_NAME_FAQ, documents=[text], metadata=[md])
-        return generate_response("Pregunta agregada correctamente", "ok", 200)
-    except UnexpectedResponse as e:
-        return generate_response(f"{e}", "error", 400)
-    except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500)
+    if not result[0]:
+        text, md = result[1], result[2]
+        try:
+            qdrant_client.add(
+                Config.COLLECTION_NAME_FAQ, documents=[text], metadata=[md]
+            )
+            return generate_response("Pregunta agregada correctamente", "ok", 200)
+        except UnexpectedResponse as e:
+            return generate_response(f"{e}", "error", 400)
+        except Exception as e:
+            return generate_response("Algo salió mal en el servidor", "error", 500)
+    else:
+        return result[1]
 
 
 def handle_faq_result(search_result):
@@ -99,15 +93,15 @@ def update_or_delete_faq(faq_id: str):
         return conn
     qdrant_client: QdrantClient = conn
     if request.method == "PUT":
-        return handle_faq_put_response(faq_id, qdrant_client)
+        return handle_update_response(faq_id, qdrant_client)
     if request.method == "DELETE":
         return handle_faq_delete_response(faq_id, qdrant_client)
 
     return generate_response("Método no permitido", "error", 405)
 
 
-def handle_faq_put_response(faq_id: str, qdrant_client: QdrantClient):
-    return
+def handle_update_response(faq_id: str, qdrant_client: QdrantClient):
+    return generate_response("Método no creado", "error", 500)
 
 
 def handle_faq_delete_response(faq_id: str, qdrant_client: QdrantClient):
