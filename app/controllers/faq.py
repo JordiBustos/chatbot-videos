@@ -101,7 +101,22 @@ def update_or_delete_faq(faq_id: str):
 
 
 def handle_update_response(faq_id: str, qdrant_client: QdrantClient):
-    return generate_response("Método no creado", "error", 500)
+    result = extract_and_validate_post_data(request)
+    if not result[0]:
+        try:
+            qdrant_client.overwrite_payload(
+                Config.COLLECTION_NAME_FAQ,
+                {
+                    "document": result[1],
+                    "answer": result[2]["answer"],
+                    "category": result[2]["category"],
+                    "courses_id": result[2]["courses_id"],
+                },
+                points=[faq_id],
+            )
+        except:
+            pass
+    return result[1]
 
 
 def handle_faq_delete_response(faq_id: str, qdrant_client: QdrantClient):
