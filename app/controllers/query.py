@@ -1,3 +1,4 @@
+from typing import Union
 from flask import request
 from app.services.qdrant_service import (
     connect_qdrant,
@@ -5,12 +6,12 @@ from app.services.qdrant_service import (
     get_qdrant_errors,
 )
 from app.config import Config
-from app.types import QdrantError
 from app.utils import generate_response, get_prompt, validate_prompt
+from app.types import Response
 
 
 def handle_query_response():
-    prompt: str = get_prompt(request)
+    prompt = get_prompt(request)
 
     prompt_validation = validate_prompt(prompt)
     if prompt_validation is not True:
@@ -27,9 +28,8 @@ def handle_query_response():
         return generate_response(f"{e}", "error", 500)
 
 
-def handle_search_result(search_result):
-    qdrant_search_errors: QdrantError = get_qdrant_errors()
-
+def handle_search_result(search_result: Union[list, str]) -> Response:
+    qdrant_search_errors = get_qdrant_errors()
     return (
         process_successful_search(search_result)
         if isinstance(search_result, list)
@@ -37,7 +37,7 @@ def handle_search_result(search_result):
     )
 
 
-def process_successful_search(search_result):
+def process_successful_search(search_result: Union[list, str]):
     score = search_result[0].score
     if score < Config.SCORE_THRESHOLD:
         return generate_response("No se han encontrado resultados", "error", 404)
