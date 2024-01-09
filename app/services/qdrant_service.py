@@ -58,7 +58,7 @@ def search_in_qdrant(query_text, collection_name, qdrant_client) -> Union[list, 
 
 def get_qdrant_errors() -> QdrantError:
     return {
-        "e": generate_response("Algo salió mal en la búsqueda", "error", 400),
+        "e": generate_response("Algo salió mal en la búsqueda", "error", 500),
         "ve": generate_response(
             "Input inválido. Asegúrese que el prompt ingresado existe", "error", 400
         ),

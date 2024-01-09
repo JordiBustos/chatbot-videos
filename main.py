@@ -3,7 +3,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS, cross_origin
-from app.routes import query, faq
+from app.routes import query, faq, chatbot
 
 app = Flask(__name__)
 CORS(
@@ -19,6 +19,7 @@ CORS(
 app.config.from_object("app.config.Config")
 app.register_blueprint(query.bp)
 app.register_blueprint(faq.bp)
+app.register_blueprint(chatbot.bp)
 
 port = int(os.environ.get("PORT", 5000))
 

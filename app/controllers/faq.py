@@ -41,7 +41,7 @@ def handle_get_all_response(qdrant_client: QdrantClient) -> dict:
     except UnexpectedResponse as ur:
         return generate_response(f"{ur}", "error", 404)
     except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500)
+        return generate_response(f"{e}", "error", 500)
 
 
 def handle_get_response(qdrant_client: QdrantClient):
@@ -57,7 +57,7 @@ def handle_get_response(qdrant_client: QdrantClient):
     except UnexpectedResponse as ur:
         return generate_response(f"{ur}", "error", 404)
     except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500)
+        return generate_response(f"{e}", "error", 500)
 
 
 def handle_post_response(qdrant_client: QdrantClient):
@@ -69,10 +69,10 @@ def handle_post_response(qdrant_client: QdrantClient):
                 Config.COLLECTION_NAME_FAQ, documents=[text], metadata=[md]
             )
             return generate_response("Pregunta agregada correctamente", "ok", 200)
-        except UnexpectedResponse as e:
-            return generate_response(f"{e}", "error", 400)
+        except UnexpectedResponse as ue:
+            return generate_response(f"{ue}", "error", 400)
         except Exception as e:
-            return generate_response("Algo salió mal en el servidor", "error", 500)
+            return generate_response(f"{e}", "error", 500)
     else:
         return result[1]
 
@@ -94,7 +94,6 @@ def update_or_delete_faq(faq_id: str):
         return handle_update_response(faq_id, qdrant_client)
     if request.method == "DELETE":
         return handle_faq_delete_response(faq_id, qdrant_client)
-
     return generate_response("Método no permitido", "error", 405)
 
 
@@ -113,10 +112,10 @@ def handle_update_response(faq_id: str, qdrant_client: QdrantClient):
                 points=[faq_id],
             )
             return generate_response("Pregunta actualizada correctamente", "ok", 200)
-        except UnexpectedResponse as e:
-            return generate_response(f"{e}", "error", 400)
+        except UnexpectedResponse as ue:
+            return generate_response(f"{ue}", "error", 400)
         except Exception as e:
-            return generate_response("Algo salió mal en el servidor", "error", 500)
+            return generate_response(f"{e}", "error", 500)
     else:
         return result[1]
 
@@ -132,10 +131,10 @@ def handle_faq_delete_response(faq_id: str, qdrant_client: QdrantClient):
     try:
         qdrant_client.delete(Config.COLLECTION_NAME_FAQ, [faq_id])
         return generate_response("Pregunta eliminada correctamente", "ok", 200)
-    except UnexpectedResponse as e:
-        return generate_response(f"{e}", "error", 400)
+    except UnexpectedResponse as ue:
+        return generate_response(f"{ue}", "error", 400)
     except Exception as e:
-        return generate_response("Algo salió mal en el servidor", "error", 500)
+        return generate_response(f"{e}", "error", 500)
 
 
 def get_faq_by_id(faq_id: str):

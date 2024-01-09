@@ -1,9 +1,7 @@
 TODO
 
-- Mover la validación a middlewares
-- Update & Delete faqs
-- endpoint para sanitizar inputs con openai
 - endpoint para generar respuesta final con openai
+- sanitizar inputs con openai
 
 ## Instalación
 
